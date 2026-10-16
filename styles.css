@@ -1,0 +1,2087 @@
+/**
+ * NEUROFORJA 2.0 — Sistema de Diseño Visual, Temas, Fever Mode y Arena (styles.css)
+ * Identidad tipográfica: Unbounded (Display), Figtree (UI), JetBrains Mono (Telemetría).
+ */
+
+@property --value {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  color-scheme: dark;
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-sans: 'Figtree', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Variables para interpolación de color moderna con fallback seguro */
+  --in-oklab: ;
+  --in-oklch: ;
+
+  /* Tema por defecto: Forja Volcánica */
+  --bg-deep: #080c14;
+  --bg-surface: #111827;
+  --bg-elevated: #1e293b;
+  --bg-glass: rgba(17, 24, 39, 0.88);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-primary: #f97316;
+  --accent-secondary: #fbbf24;
+  --accent-cyan: #38bdf8;
+  --accent-success: #10b981;
+  --accent-danger: #f43f5e;
+  --border-subtle: rgba(148, 163, 184, 0.22);
+  --border-strong: rgba(249, 115, 22, 0.55);
+
+  /* Variables reactivas de Fever Mode (fx.js) */
+  --fever-level: 0;
+  --fever-combo: 0;
+}
+
+@supports (background: linear-gradient(in oklch, red, blue)) {
+  :root {
+    --in-oklab: in oklab, ;
+    --in-oklch: in oklch, ;
+  }
+}
+
+/* Tema 2: Córtex Cian Bioluminiscente */
+html[data-theme='cortex'] {
+  --bg-deep: #041019;
+  --bg-surface: #0a1e2e;
+  --bg-elevated: #113047;
+  --accent-primary: #06b6d4;
+  --accent-secondary: #38bdf8;
+  --border-strong: rgba(56, 189, 248, 0.55);
+}
+
+/* Tema 3: Estética Matrix Verde (Desbloqueable en Crisol) */
+html[data-theme='matrix'] {
+  --bg-deep: #020b05;
+  --bg-surface: #07190d;
+  --bg-elevated: #0d2b18;
+  --text-main: #dcfce7;
+  --text-muted: #86efac;
+  --accent-primary: #22c55e;
+  --accent-secondary: #4ade80;
+  --accent-cyan: #10b981;
+  --border-strong: rgba(34, 197, 94, 0.6);
+}
+
+/* Tema 4: Tinta Electrónica E-Ink de Alto Contraste (Desbloqueable en Crisol) */
+html[data-theme='tinta'] {
+  color-scheme: light;
+  --bg-deep: #f5f2eb;
+  --bg-surface: #ffffff;
+  --bg-elevated: #e7e2d8;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+  --text-main: #111827;
+  --text-muted: #374151;
+  --accent-primary: #b45309;
+  --accent-secondary: #1d4ed8;
+  --accent-cyan: #0369a1;
+  --border-subtle: rgba(17, 24, 39, 0.28);
+  --border-strong: rgba(180, 83, 9, 0.7);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: start;
+  background-color: var(--bg-deep);
+  background-image: radial-gradient(
+    var(--in-oklab) circle at 50% 0%,
+    rgba(249, 115, 22, 0.14),
+    transparent 65%
+  );
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: box-shadow 0.25s ease;
+}
+
+/* Borde incandescente reactivo cuando el jugador entra en Modo «Sobrecarga» (Fever Mode) */
+body.fever-active {
+  box-shadow: inset 0 0 calc(var(--fever-level) * 22px) rgba(249, 115, 22, 0.65),
+    inset 0 0 calc(var(--fever-level) * 8px) rgba(251, 191, 36, 0.85);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: 1.25;
+  margin-top: 0;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+  max-width: 75ch;
+  overflow-wrap: break-word;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: rgba(148, 163, 184, 0.16);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================================
+   CABECERA SUPERIOR Y MINERALES
+   ============================================================================ */
+.forge-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.75rem 1.4rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-emblem {
+  font-size: 1.75rem;
+  filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.7));
+}
+
+.brand-title {
+  font-size: clamp(1.05rem, 0.85rem + 0.8vw, 1.35rem);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+.v-tag {
+  color: var(--accent-primary);
+}
+
+.brand-subtitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-secondary);
+}
+
+.thermal-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.85rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+}
+
+.thermal-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.thermal-val {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--accent-secondary);
+}
+
+.minerals-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.mineral-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.mineral-sym {
+  font-weight: 800;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.btn-crucible {
+  background: linear-gradient(
+    var(--in-oklch) 135deg,
+    var(--accent-primary),
+    #d97706
+  );
+  color: #090d16;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.theme-select,
+.btn-icon-action {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ============================================================================
+   PESTAÑAS DE NAVEGACIÓN
+   ============================================================================ */
+.forge-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1.4rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.nav-tab-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nav-tab-btn:hover {
+  color: var(--text-main);
+  border-color: var(--accent-primary);
+}
+
+.nav-tab-btn.active {
+  background: var(--accent-primary);
+  color: #080c14;
+  border-color: var(--accent-primary);
+}
+
+/* ============================================================================
+   CONTENEDOR PRINCIPAL Y ANILLOS DE PROGRESO (progress-ring)
+   ============================================================================ */
+.forge-main-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 1.5rem 1.4rem 4rem;
+}
+
+.hero-forge-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 980px) {
+  .hero-forge-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.forge-core-card,
+.trigger-feature-card,
+.protocol-card,
+.mutator-card,
+.fusion-card,
+.game-tile-card,
+.relic-card,
+.adn-radar-card,
+.adn-bio-card,
+.social-card,
+.incursion-hero-card,
+.principle-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.highlight-card {
+  border-color: var(--border-strong);
+}
+
+.card-kicker {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-primary);
+  margin-bottom: 0.35rem;
+}
+
+.forge-core-holder {
+  display: grid;
+  place-items: center;
+  margin: 0.25rem 0;
+}
+
+.forge-core-svg {
+  width: 220px;
+  height: 220px;
+}
+
+.core-archetype-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 0.85rem;
+}
+
+.core-rings-row,
+.trigger-main-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Componente semántico <progress class="progress-ring"> según modern-web-guidance */
+.progress-ring-wrapper {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+progress.progress-ring {
+  --size: 76px;
+  --thickness: 9px;
+  --track-color: rgba(148, 163, 184, 0.2);
+  --fill-color: var(--accent-primary);
+  --value: attr(value type(<number>));
+  width: var(--size);
+  height: var(--size);
+  appearance: none;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--fill-color) calc(var(--value) * 1%),
+    var(--track-color) 0
+  );
+  /* MANDATORY: Clip the background to the border-area. */
+  background-clip: border-area;
+  border: var(--thickness) solid transparent;
+  background-origin: border-box;
+  transition: --value 0s ease-in-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  progress.progress-ring {
+    transition-duration: 0.4s;
+  }
+}
+
+progress.progress-ring.ring-cyan {
+  --fill-color: var(--accent-cyan);
+}
+
+progress.progress-ring[value='100'] {
+  --fill-color: var(--accent-success);
+}
+
+progress.progress-ring::-webkit-progress-bar,
+progress.progress-ring::-webkit-progress-value {
+  display: none;
+  background: none;
+}
+
+progress.progress-ring::-moz-progress-bar {
+  display: none;
+  background: none;
+}
+
+@supports not (background-clip: border-area) {
+  progress.progress-ring {
+    mask-image: radial-gradient(
+      transparent calc(50% - var(--thickness)),
+      black calc(50% - var(--thickness) + 0.5px)
+    );
+    border: 0;
+  }
+}
+
+.progress-ring-content {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.hooked-triggers-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.trigger-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ============================================================================
+   BOTONES Y REJILLAS DE SECCIÓN
+   ============================================================================ */
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: 9px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.12s ease, filter 0.15s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(
+    var(--in-oklch) 135deg,
+    var(--accent-primary),
+    #ea580c
+  );
+  color: #080c14;
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  border-color: var(--border-subtle);
+}
+
+.btn-sm {
+  padding: 0.48rem 0.85rem;
+  font-size: 0.85rem;
+}
+
+.btn-lg {
+  padding: 0.85rem 1.4rem;
+  font-size: 1rem;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  filter: brightness(1.1);
+}
+
+.section-block {
+  margin-top: 2.2rem;
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-sub {
+  color: var(--text-muted);
+  margin: 0.25rem 0 0;
+}
+
+.protocols-grid,
+.mutators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+  gap: 1rem;
+}
+
+.protocol-recommended {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
+}
+
+.protocol-top,
+.mutator-head,
+.fusion-header,
+.game-tile-top,
+.game-tile-meta,
+.fusion-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.protocol-time {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.rec-pill {
+  background: var(--accent-primary);
+  color: #080c14;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+.protocol-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.75rem 0 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.mod-tag,
+.game-file-badge {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.mutator-active {
+  border-color: var(--accent-secondary);
+}
+
+.mutator-mult {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-secondary);
+}
+
+/* ============================================================================
+   CATÁLOGO DE 20 MINIJUEGOS Y 5 MODOS FUSIÓN
+   ============================================================================ */
+.fusion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.fusion-card {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.fusion-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--accent-cyan);
+}
+
+.fusion-modules {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.domain-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.domain-filter-btn {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.domain-filter-btn.active {
+  background: var(--accent-cyan);
+  color: #080c14;
+  border-color: var(--accent-cyan);
+}
+
+.games-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.game-tile-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.game-tile-icon {
+  font-size: 1.65rem;
+}
+
+.game-tile-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  margin: 0.65rem 0 0.85rem;
+}
+
+/* ============================================================================
+   INCURSIONES ROGUELIKE, TALLER DE 24 RELIQUIAS, ADN Y LIGAS
+   ============================================================================ */
+.incursions-split-grid,
+.adn-top-grid,
+.social-top-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+.incursion-features-list {
+  padding-left: 1.2rem;
+  margin: 1rem 0 1.35rem;
+  color: var(--text-muted);
+}
+
+.incursion-features-list li {
+  margin-bottom: 0.45rem;
+}
+
+.relics-counter-pill {
+  font-family: var(--font-mono);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  color: var(--accent-secondary);
+}
+
+.relics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  gap: 1rem;
+}
+
+.relic-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.relic-forged {
+  border-color: var(--accent-secondary);
+  background: linear-gradient(
+    var(--in-oklab) 180deg,
+    var(--bg-surface),
+    rgba(251, 191, 36, 0.08)
+  );
+}
+
+.relic-tier-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.relic-desc {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  min-height: 3.6em;
+}
+
+.relic-costs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.cost-pill {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.cost-ok {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.cost-missing {
+  background: rgba(244, 63, 94, 0.16);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+.relic-owned-badge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--accent-success);
+}
+
+.hex-radar-holder {
+  display: grid;
+  place-items: center;
+}
+
+.hex-radar-svg {
+  width: 280px;
+  height: 280px;
+}
+
+.bio-tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.55rem;
+  margin: 0.85rem 0 1.2rem;
+}
+
+.bio-tag-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 9px;
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.bio-tag-btn.active {
+  border-color: var(--accent-primary);
+  background: rgba(249, 115, 22, 0.16);
+}
+
+.bio-tag-btn small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.bio-insights-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.bio-insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem;
+  background: var(--bg-elevated);
+  border-radius: 9px;
+  font-size: 0.88rem;
+}
+
+.bio-insight-item p {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+}
+
+.canvas-preview-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+}
+
+#neuroWrappedCanvas {
+  max-width: 100%;
+  width: 420px;
+  height: auto;
+  border-radius: 10px;
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1rem;
+}
+
+.principle-golden {
+  border-color: var(--accent-secondary);
+}
+
+.principle-locked {
+  opacity: 0.65;
+}
+
+.principle-cat {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+  margin-bottom: 0.3rem;
+}
+
+.principle-tip {
+  margin-top: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  background: var(--bg-elevated);
+  border-radius: 7px;
+  font-size: 0.84rem;
+}
+
+/* ============================================================================
+   LIGAS Y DUELO CONTRA FANTASMAS
+   ============================================================================ */
+.ghost-duel-controls input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.ghost-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.league-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-surface);
+  border: 2px solid var(--accent-primary);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.league-icon {
+  font-size: 2rem;
+}
+
+.league-pts-badge {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--accent-secondary);
+}
+
+.league-table-wrapper {
+  overflow-x: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.league-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.league-table th,
+.league-table td {
+  padding: 0.75rem 1rem;
+  text-align: start;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.league-table tr.player-row {
+  background: rgba(249, 115, 22, 0.18);
+}
+
+/* ============================================================================
+   ARENA INTERACTIVA DE JUEGO Y ELEMENTOS DE LOS 20 MINIJUEGOS
+   ============================================================================ */
+.arena-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(4, 7, 13, 0.88);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.arena-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.arena-modal-shell {
+  width: min(860px, 100%);
+  background: var(--bg-surface);
+  border: 2px solid var(--border-strong);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+}
+
+.arena-hud-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+  background: var(--bg-elevated);
+}
+
+.arena-hud-left,
+.arena-hud-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.arena-title {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.arena-level-pill,
+.arena-mutator-pill {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.fever-badge {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(var(--in-oklch) 90deg, #f97316, #fbbf24);
+  color: #080c14;
+}
+
+.arena-kpi {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+}
+
+.arena-kpi span {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.arena-kpi strong {
+  font-size: 1rem;
+  color: var(--accent-secondary);
+}
+
+.btn-close-arena {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.arena-time-bar-track {
+  height: 7px;
+  background: rgba(148, 163, 184, 0.18);
+}
+
+.arena-time-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-primary));
+  transition: width 0.1s linear;
+}
+
+.arena-ghost-track {
+  position: relative;
+  height: 26px;
+  background: rgba(56, 189, 248, 0.12);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  padding: 0 0.85rem;
+}
+
+.arena-ghost-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+}
+
+.arena-ghost-marker {
+  position: absolute;
+  top: 2px;
+  transition: left 0.2s linear;
+}
+
+.arena-boss-hud {
+  padding: 0.55rem 1.25rem;
+  background: rgba(244, 63, 94, 0.15);
+  border-bottom: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+.boss-hp-track {
+  height: 10px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+
+.boss-hp-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #f43f5e, #fb923c);
+  transition: width 0.2s ease;
+}
+
+.arena-micro-banner {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.4rem;
+  background: var(--accent-secondary);
+  color: #080c14;
+}
+
+.game-stage-arena {
+  min-height: 410px;
+  padding: 1.75rem;
+  display: grid;
+  place-items: center;
+}
+
+.game-card-Layout {
+  width: min(640px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.game-tag-pill {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--accent-cyan);
+  background: var(--bg-elevated);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+}
+
+.game-subhint {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.game-big-stimulus {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 1.2rem + 2vw, 2.5rem);
+  padding: 1.1rem 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  width: 100%;
+}
+
+.game-big-stimulus.text-md {
+  font-size: clamp(1.1rem, 0.95rem + 0.8vw, 1.45rem);
+}
+
+.mono-spaced {
+  letter-spacing: 0.22em;
+}
+
+.game-options-grid {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.game-options-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.game-options-grid.cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.game-opt-btn {
+  padding: 0.95rem 1.1rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-main);
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.1s ease;
+}
+
+.game-opt-btn:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.game-opt-btn.btn-accent {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: var(--accent-primary);
+}
+
+/* Tableros especiales: Matriz, N-Back, No-Go, Rastreo, Hanói, Globo */
+.matrix-board,
+.nback-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 84px);
+  grid-template-rows: repeat(3, 84px);
+  gap: 0.6rem;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.matrix-board.rotated-90 {
+  transform: rotate(90deg);
+}
+
+.matrix-tile,
+.nback-cell {
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--text-main);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.matrix-tile.lit,
+.nback-cell.active {
+  background: var(--accent-primary);
+  color: #080c14;
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 18px rgba(249, 115, 22, 0.65);
+}
+
+.matrix-tile.correct {
+  background: var(--accent-success);
+  color: #080c14;
+}
+
+.matrix-tile.wrong {
+  background: var(--accent-danger);
+}
+
+.nback-history-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.nogo-target {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: 4px solid transparent;
+  font-family: var(--font-mono);
+  font-weight: 800;
+}
+
+.nogo-safe {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: var(--accent-success);
+  color: #6ee7b7;
+}
+
+.nogo-danger {
+  background: rgba(244, 63, 94, 0.24);
+  border-color: var(--accent-danger);
+  color: #fda4af;
+}
+
+.nogo-glyph {
+  font-size: 3rem;
+}
+
+.switch-rule-banner {
+  padding: 0.6rem 1rem;
+  border: 2px solid;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  width: 100%;
+}
+
+.track-field {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.acoustic-fog-active {
+  filter: contrast(0.65) brightness(0.7);
+}
+
+.track-orb {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.track-orb.is-target-preview {
+  background: var(--accent-primary);
+  border-color: var(--accent-secondary);
+  color: #080c14;
+}
+
+.track-orb.orb-hit {
+  background: var(--accent-success);
+  color: #080c14;
+}
+
+.track-orb.orb-miss {
+  background: var(--accent-danger);
+}
+
+.odd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 68px);
+  gap: 0.55rem;
+}
+
+.odd-cell {
+  height: 62px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  cursor: pointer;
+}
+
+.hanoi-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.hanoi-peg {
+  min-height: 170px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hanoi-peg.peg-selected {
+  border-color: var(--accent-primary);
+}
+
+.hanoi-disks-stack {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+  margin-bottom: 0.6rem;
+}
+
+.hanoi-disk {
+  height: 24px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: #080c14;
+  display: grid;
+  place-items: center;
+}
+
+.disk-size-1 {
+  width: 45%;
+  background: var(--accent-cyan);
+}
+.disk-size-2 {
+  width: 70%;
+  background: var(--accent-secondary);
+}
+.disk-size-3 {
+  width: 92%;
+  background: var(--accent-primary);
+}
+
+.cubes-iso-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.cube-pillar {
+  background: var(--bg-elevated);
+  padding: 0.6rem;
+  border-radius: 10px;
+}
+
+.balloon-stage {
+  height: 175px;
+  display: grid;
+  place-items: center;
+}
+
+.plasma-orb {
+  width: 105px;
+  height: 105px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fbbf24, #f97316, #be123c);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: #080c14;
+  transition: transform 0.2s ease;
+}
+
+.systems-telemetry-box,
+.stock-ticker-box {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bg-elevated);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+/* Resumen de partida, Perks Roguelike y Crisol Sellado */
+.game-summary-card,
+.crucible-modal-card {
+  width: min(580px, 100%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.summary-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.summary-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.summary-kpi {
+  background: var(--bg-elevated);
+  padding: 0.7rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+}
+
+.summary-kpi span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.summary-kpi strong {
+  font-size: 1.25rem;
+}
+
+.ghost-code-row {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.ghost-code-row input {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 0.45rem 0.7rem;
+  border-radius: 7px;
+  font-family: var(--font-mono);
+}
+
+.summary-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.perk-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.perk-choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1rem;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: 12px;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.perk-choice-card:hover {
+  border-color: var(--accent-secondary);
+}
+
+.perk-icon {
+  font-size: 1.8rem;
+}
+
+.crucible-stage {
+  margin: 1.25rem 0;
+}
+
+.crucible-vessel-btn {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.35), var(--bg-elevated));
+  border: 3px solid var(--accent-primary);
+  color: var(--text-main);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.crucible-vessel-btn[data-step='1'] {
+  border-color: var(--accent-secondary);
+  transform: scale(1.05);
+}
+
+.crucible-vessel-btn[data-step='2'] {
+  border-color: #ffffff;
+  box-shadow: 0 0 30px var(--accent-primary);
+  transform: scale(1.1);
+}
+
+.crucible-glyph {
+  font-size: 3.4rem;
+}
+
+.crucible-tap-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.crucible-odds-strip {
+  display: flex;
+  justify-content: center;
+  gap: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.crucible-loot-card {
+  padding: 1rem;
+  background: var(--bg-elevated);
+  border: 2px solid var(--accent-secondary);
+  border-radius: 12px;
+}
+
+.wordle-share-preview {
+  background: var(--bg-elevated);
+  padding: 1rem;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  text-align: start;
+  white-space: pre-wrap;
+}
+
+/* Micro-píldora en vivo de principles.js */
+.live-principle-toast {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  width: min(390px, calc(100vw - 2rem));
+  background: var(--bg-surface);
+  border: 2px solid var(--accent-secondary);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+.principle-pill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.principle-pill-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--accent-secondary);
+}
+
+.principle-pill-close {
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.principle-pill-title {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.principle-pill-hook,
+.principle-pill-tip {
+  font-size: 0.84rem;
+  margin: 0.25rem 0;
+}
+
+/* Chispas de la Fragua y vibración visual */
+.forge-spark {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-secondary);
+  pointer-events: none;
+  z-index: 120;
+  animation: sparkFly 0.52s ease-out forwards;
+}
+
+@keyframes sparkFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.fx-shake {
+  animation: shakeArena 0.28s ease-in-out;
+}
+
+@keyframes shakeArena {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-7px);
+  }
+  75% {
+    transform: translateX(7px);
+  }
+}
+
+/* Soporte para Modo de Colores Forzados (Windows High Contrast) */
+@media (forced-colors: active) {
+  .forge-core-card,
+  .trigger-feature-card,
+  .protocol-card,
+  .mutator-card,
+  .fusion-card,
+  .game-tile-card,
+  .relic-card,
+  .game-opt-btn,
+  .btn-primary,
+  .btn-secondary {
+    border: 2px solid CanvasText;
+  }
+  .nav-tab-btn.active,
+  .btn-primary {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* ============================================================================
+   TRANSICIONES DIRECCIONALES DE NAVEGACIÓN (directional-navigation-transitions)
+   ============================================================================ */
+@keyframes slide-to-left {
+  /* Mandatory: animate `transform` instead of inset properties for better performance. */
+  to {
+    transform: translateX(-18%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(18%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-to-right {
+  to {
+    transform: translateX(18%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-left {
+  from {
+    transform: translateX(-18%);
+    opacity: 0;
+  }
+}
+
+::view-transition-group(root) {
+  animation: 0.26s ease-in-out both;
+}
+
+/* MANDATORY: Apply forward animations when the 'forward' type is active */
+html:active-view-transition-type(forward)::view-transition-old(root) {
+  animation-name: slide-to-left;
+}
+html:active-view-transition-type(forward)::view-transition-new(root) {
+  animation-name: slide-from-right;
+}
+
+/* MANDATORY: Apply backward animations when the 'backward' type is active */
+html:active-view-transition-type(backward)::view-transition-old(root) {
+  animation-name: slide-to-right;
+}
+html:active-view-transition-type(backward)::view-transition-new(root) {
+  animation-name: slide-from-left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root) {
+    animation: none !important;
+  }
+}
+
+/* ============================================================================
+   ERGONOMÍA TÁCTIL Y UNIDADES DE VIEWPORT DINÁMICO (MÓVILES Y TABLETS)
+   ============================================================================ */
+body {
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+
+button,
+select,
+.matrix-tile,
+.nogo-target,
+.track-orb,
+.odd-cell,
+.hanoi-peg,
+.game-opt-btn,
+.nav-tab-btn,
+.bio-tag-btn,
+.crucible-vessel-btn {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button:active:not(:disabled),
+.matrix-tile:active,
+.odd-cell:active,
+.nogo-target:active {
+  transform: scale(0.96);
+}
+
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 46px;
+}
+
+.nav-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* Container Queries para que los paneles se adapten a su propio ancho disponible */
+.forge-main-container,
+.tab-panel {
+  container-type: inline-size;
+}
+
+@container (max-width: 720px) {
+  .hero-forge-grid,
+  .incursions-split-grid,
+  .adn-top-grid,
+  .social-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trigger-main-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .trigger-actions-row {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .trigger-actions-row .btn-primary,
+  .trigger-actions-row .btn-secondary {
+    width: 100%;
+  }
+
+  .games-catalog-grid,
+  .relics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@container (max-width: 440px) {
+  .games-catalog-grid,
+  .relics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   DISEÑO PARA TABLETS (769px - 1120px o Modo Tablet Forzado)
+   ============================================================================ */
+html[data-device-mode='tablet'] body {
+  max-width: 900px;
+  margin: 0 auto;
+  border-inline: 2px solid var(--border-subtle);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.75);
+}
+
+@media (min-width: 769px) and (max-width: 1120px) {
+  .hero-forge-grid {
+    grid-template-columns: 310px 1fr;
+  }
+
+  .games-catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .relics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .game-opt-btn {
+    min-height: 60px;
+    font-size: 1.1rem;
+  }
+}
+
+/* ============================================================================
+   DISEÑO PARA MÓVILES / SMARTPHONES (<= 768px o Modo Smartphone Forzado)
+   ============================================================================ */
+html[data-device-mode='mobile'] body {
+  max-width: 430px;
+  margin: 0 auto;
+  border-inline: 2px solid var(--border-strong);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.85);
+}
+
+@media (max-width: 768px) {
+  .forge-topbar {
+    padding: 0.55rem 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+  }
+
+  .thermal-pill {
+    padding: 0.25rem 0.65rem;
+  }
+
+  .thermal-label {
+    display: none;
+  }
+
+  /* Tira horizontal táctil deslizable para los 5 minerales en móvil */
+  .minerals-strip {
+    order: 3;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scrollbar-width: none;
+  }
+
+  .minerals-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mineral-chip {
+    flex-shrink: 0;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.78rem;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  /* Barra de Navegación Inferior Fija para el Pulgar (Bottom Dock) */
+  .forge-tabs-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 75;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.2rem;
+    padding: 0.35rem 0.35rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border-strong);
+    border-bottom: 0;
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.55);
+  }
+
+  .nav-tab-btn {
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.35rem 0.15rem;
+    min-height: 52px;
+    border: 0;
+    border-radius: 10px;
+    font-size: 0.68rem;
+  }
+
+  .nav-icon {
+    font-size: 1.25rem;
+  }
+
+  .forge-main-container {
+    padding: 1rem 0.85rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Filtros de dominio deslizables con un dedo */
+  .domain-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 0.35rem;
+    scrollbar-width: none;
+  }
+
+  /* Arena de juego a pantalla completa (100dvh) en móvil */
+  .arena-modal-backdrop {
+    padding: 0;
+  }
+
+  .arena-modal-shell {
+    width: 100dvw;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .arena-hud-bar {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .game-stage-arena {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0.85rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .matrix-board,
+  .nback-grid {
+    grid-template-columns: repeat(3, min(24dvw, 86px));
+    grid-template-rows: repeat(3, min(24dvw, 86px));
+  }
+
+  .odd-grid {
+    grid-template-columns: repeat(4, min(19dvw, 68px));
+  }
+
+  .game-opt-btn {
+    min-height: 56px;
+    font-size: 1rem;
+    padding: 0.85rem;
+  }
+
+  .nogo-target {
+    width: min(65dvw, 230px);
+    height: min(65dvw, 230px);
+  }
+
+  .live-principle-toast {
+    bottom: calc(4.8rem + env(safe-area-inset-bottom, 0px));
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+  }
+}
+
+/* Mismos estilos de Dock Inferior cuando el usuario activa Modo Smartphone desde escritorio */
+html[data-device-mode='mobile'] .forge-tabs-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(430px, 100dvw);
+  z-index: 75;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.2rem;
+  padding: 0.35rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-strong);
+}
+
+html[data-device-mode='mobile'] .nav-tab-btn {
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.35rem 0.15rem;
+  min-height: 52px;
+  border: 0;
+  font-size: 0.68rem;
+}
+
+html[data-device-mode='mobile'] .forge-main-container {
+  padding: 1rem 0.85rem 5.5rem;
+}
+

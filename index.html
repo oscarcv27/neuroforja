@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="volcanica">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#080c14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Neuroforja 2.0" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>NEUROFORJA 2.0 — Arquitectura de Entrenamiento Mental y Gamificación</title>
+  <!-- Identidad tipográfica del Blueprint: Unbounded, Figtree y JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Unbounded:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Cabecera Industrial de La Fragua -->
+  <header class="forge-topbar">
+    <div class="brand-lockup">
+      <div class="brand-emblem" aria-hidden="true">🔥</div>
+      <div>
+        <h1 class="brand-title">NEUROFORJA <span class="v-tag">2.0</span></h1>
+        <p class="brand-subtitle" id="topTempPhase">Fragua Roja Activa</p>
+      </div>
+    </div>
+
+    <!-- Termómetro de Fusión (300 °C - 3.000 °C) -->
+    <div class="thermal-pill" title="Temperatura de la Fragua: multiplica la rareza y cantidad de minerales extraídos">
+      <span class="thermal-icon" aria-hidden="true">🌡️</span>
+      <div>
+        <span class="thermal-label">TERMÓMETRO DE FUSIÓN</span>
+        <strong id="topTempVal" class="thermal-val">860 °C (×1.25)</strong>
+      </div>
+    </div>
+
+    <!-- Almacén de los 5 Minerales Cognitivos -->
+    <div id="topMineralsStrip" class="minerals-strip" aria-label="Inventario de Minerales Cognitivos"></div>
+
+    <!-- Acciones Rápidas: Crisoles, Vista Móvil/Tablet, Tema Visual y Audio Pentatónico -->
+    <div class="topbar-actions">
+      <button type="button" id="openCrucibleTopBtn" class="btn-crucible">
+        <span id="topCrucibleCount">🏺 Crisoles (1)</span>
+      </button>
+
+      <label class="sr-only" for="deviceModeSelect">Formato de pantalla</label>
+      <select id="deviceModeSelect" class="theme-select" title="Alternar formato Automático, Móvil o Tablet">
+        <option value="auto">📲 Vista: Automática</option>
+        <option value="mobile">📱 Modo Smartphone</option>
+        <option value="tablet">📟 Modo Tablet</option>
+      </select>
+
+      <label class="sr-only" for="themeSelector">Seleccionar tema visual</label>
+      <select id="themeSelector" class="theme-select" title="Cambiar estética visual">
+        <option value="volcanica">🔥 Forja Volcánica</option>
+        <option value="cortex">💠 Córtex Cian</option>
+        <option value="matrix">🟢 Matrix Verde (Crisol)</option>
+        <option value="tinta">📄 Tinta Electrónica (Crisol)</option>
+      </select>
+
+      <button type="button" id="toggleSoundBtn" class="btn-icon-action">
+        🔊 Audio
+      </button>
+    </div>
+  </header>
+
+  <!-- Navegación Principal (Dock Inferior en Móviles / Barra Táctil en Tablets) -->
+  <nav class="forge-tabs-nav" role="tablist" aria-label="Secciones de Neuroforja 2.0">
+    <button type="button" class="nav-tab-btn active" role="tab" aria-selected="true" data-tab="fragua" data-tab-idx="0">
+      <span class="nav-icon" aria-hidden="true">🔥</span>
+      <span class="nav-label">Fragua</span>
+    </button>
+    <button type="button" class="nav-tab-btn" role="tab" aria-selected="false" data-tab="catalogo" data-tab-idx="1">
+      <span class="nav-icon" aria-hidden="true">🎮</span>
+      <span class="nav-label">20 Juegos</span>
+    </button>
+    <button type="button" class="nav-tab-btn" role="tab" aria-selected="false" data-tab="incursiones" data-tab-idx="2">
+      <span class="nav-icon" aria-hidden="true">⚔️</span>
+      <span class="nav-label">Asalto</span>
+    </button>
+    <button type="button" class="nav-tab-btn" role="tab" aria-selected="false" data-tab="taller" data-tab-idx="3">
+      <span class="nav-icon" aria-hidden="true">⚒️</span>
+      <span class="nav-label">Taller</span>
+    </button>
+    <button type="button" class="nav-tab-btn" role="tab" aria-selected="false" data-tab="adn" data-tab-idx="4">
+      <span class="nav-icon" aria-hidden="true">🧠</span>
+      <span class="nav-label">ADN & Bio</span>
+    </button>
+    <button type="button" class="nav-tab-btn" role="tab" aria-selected="false" data-tab="social" data-tab-idx="5">
+      <span class="nav-icon" aria-hidden="true">🏆</span>
+      <span class="nav-label">Ligas</span>
+    </button>
+  </nav>
+
+  <main class="forge-main-container">
+    <!-- =====================================================================
+         PESTAÑA 1: LA FRAGUA CENTRAL, ESCÁNER 45S Y PROTOCOLOS CIRCADIANOS
+         ===================================================================== -->
+    <section id="panel-fragua" class="tab-panel" role="tabpanel">
+      <div class="hero-forge-grid">
+        <!-- Tarjeta del Núcleo Evolutivo -->
+        <div class="forge-core-card">
+          <div class="card-kicker">NÚCLEO REACTIVO · TESELACIÓN SINÁPTICA</div>
+          <div id="forgeCoreContainer" class="forge-core-holder"></div>
+          <div class="core-archetype-row">
+            <span>Arquetipo Activo:</span>
+            <strong id="homeArchetypeBadge">⚡ Calculador Relámpago</strong>
+          </div>
+          <div class="core-rings-row">
+            <div class="progress-ring-wrapper">
+              <progress
+                id="thermalProgressRing"
+                value="35"
+                max="100"
+                aria-label="Porcentaje de temperatura máxima de la fragua"
+                class="progress-ring"
+              ></progress>
+              <div id="thermalProgressContent" class="progress-ring-content">35%</div>
+            </div>
+            <div class="core-ring-caption">
+              <strong>Calor de Racha Térmica</strong>
+              <p>Si fallas un día, la fragua no cae a cero: se enfría gradualmente sin frustración.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gatillos Útiles del Bucle «Hooked» -->
+        <div class="hooked-triggers-col">
+          <!-- 1. Escáner de Estado Mental en 45 Segundos -->
+          <div class="trigger-feature-card highlight-card">
+            <div class="trigger-main-row">
+              <div class="progress-ring-wrapper">
+                <progress
+                  id="readinessProgressRing"
+                  value="92"
+                  max="100"
+                  aria-label="Puntuación de agudeza mental Readiness Score"
+                  class="progress-ring ring-cyan"
+                ></progress>
+                <div id="readinessProgressContent" class="progress-ring-content">92%</div>
+              </div>
+              <div class="trigger-info">
+                <span class="card-kicker">1. GATILLO ÚTIL · CHEQUEO BIOMÉTRICO (45 SEG)</span>
+                <h3>🩺 Escáner de Estado Mental (Readiness Score)</h3>
+                <p id="readinessDiagnosisText">
+                  Combina 20s de nogo.js (latencia en ms) y 25s de matrix.js frente a tu media histórica de 14 días.
+                </p>
+              </div>
+            </div>
+            <div class="trigger-actions-row">
+              <button type="button" id="startReadinessBtn" class="btn-primary">
+                ⚡ Ejecutar Escáner de 45s Ahora
+              </button>
+              <button type="button" id="startWarmupBtn" class="btn-secondary">
+                🎙️ Calentamiento Pre-Examen / Reunión (120s)
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. La Forja del Día (Estilo Wordle con Semilla Diaria) -->
+          <div class="trigger-feature-card">
+            <span class="card-kicker">SEMILLA MATEMÁTICA DIARIA (MULBERRY32)</span>
+            <h3>📅 La Forja del Día (Reto Mundial Estilo Wordle)</h3>
+            <p>
+              Todos los jugadores reciben exactamente el mismo tablero en <code>deduce.js</code>,
+              <code>calc.js</code> y <code>anagram.js</code>. Genera tu resumen visual con emojis al terminar.
+            </p>
+            <button type="button" id="startDailyWordleBtn" class="btn-primary">
+              🔥 Jugar La Forja del Día (+1 Crisol)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selector de 4 Protocolos Neuro-Funcionales Circadianos -->
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">2. ACCIÓN (FLOW) · COPILOTO DEL CEREBRO</span>
+            <h2>Protocolos Neuro-Funcionales Circadianos (flow.js)</h2>
+          </div>
+          <p class="section-sub">Rutinas de 3 juegos adaptadas a tu energía biológica y hora del día.</p>
+        </div>
+        <div id="circadianProtocolsGrid" class="protocols-grid"></div>
+      </div>
+
+      <!-- Mutadores Diarios -->
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">REJUGABILIDAD INFINITA · FUN.JS</span>
+            <h2>Mutadores Diarios de la Fragua</h2>
+          </div>
+          <p class="section-sub">Altera las leyes físicas y perceptivas de los minijuegos para multiplicar la extracción de mineral.</p>
+        </div>
+        <div id="dailyMutatorsGrid" class="mutators-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         PESTAÑA 2: CATÁLOGO DE LOS 20 MINIJUEGOS Y 5 MODOS FUSIÓN
+         ===================================================================== -->
+    <section id="panel-catalogo" class="tab-panel" role="tabpanel" hidden>
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">EVOLUCIÓN DEL CATÁLOGO · COMBOS DE ALTA TENSIÓN</span>
+            <h2>Los 5 Modos «Fusión» (Alternancia Bajo Presión)</h2>
+          </div>
+          <p class="section-sub">Combinan dos o tres motores cognitivos en tiempo real para provocar estado de hiper-foco.</p>
+        </div>
+        <div id="fusionModesGrid" class="fusion-grid"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">20 MOTORES EJECUTIVOS CON MICRO-DDA (&lt; 800 MS)</span>
+            <h2>Catálogo Completo de los 20 Minijuegos Cognitivos</h2>
+          </div>
+          <div class="domain-filters" role="group" aria-label="Filtrar juegos por dominio cognitivo">
+            <button type="button" class="domain-filter-btn active" data-domain="all">Todos (20)</button>
+            <button type="button" class="domain-filter-btn" data-domain="agilidad">⚡ Agilidad (Litio)</button>
+            <button type="button" class="domain-filter-btn" data-domain="atencion">🎯 Atención (Mercurio)</button>
+            <button type="button" class="domain-filter-btn" data-domain="memoria">🧬 Memoria (Cobalto)</button>
+            <button type="button" class="domain-filter-btn" data-domain="espacial">🧊 Visión 3D (Cobalto)</button>
+            <button type="button" class="domain-filter-btn" data-domain="logica">🧩 Lógica (Titanio)</button>
+            <button type="button" class="domain-filter-btn" data-domain="riesgo">🚨 Riesgo (Obsidiana)</button>
+          </div>
+        </div>
+        <div id="gamesCatalogGrid" class="games-catalog-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         PESTAÑA 3: INCURSIONES ROGUELIKE Y JEFE SEMANAL (BOSS FIGHT)
+         ===================================================================== -->
+    <section id="panel-incursiones" class="tab-panel" role="tabpanel" hidden>
+      <div class="incursions-split-grid">
+        <!-- Modo Roguelike: Asalto al Córtex -->
+        <article class="incursion-hero-card roguelike-card">
+          <span class="card-kicker">MODO ROGUELIKE · 7 PISOS SEGUIDOS</span>
+          <h2>⚔️ Asalto al Córtex</h2>
+          <p>
+            Enfréntate a una torre de <strong>7 niveles consecutivos con 3 vidas</strong>. Entre piso y piso
+            elegirás un <strong>Potenciador Sináptico (Perk)</strong> con ventajas y contrapartidas estratégicas.
+          </p>
+          <ul class="incursion-features-list">
+            <li>❤️ 3 Vidas base (4 Vidas si forjas el <em>Códice de Von Neumann</em>).</li>
+            <li>🃏 Elección de 1 entre 3 Perks al superar cada piso.</li>
+            <li>🏺 Recompensa al coronar el Piso 7: <strong>+2 Crisoles Sellados y +240 Minerales</strong>.</li>
+          </ul>
+          <button type="button" id="launchRoguelikeBtn" class="btn-primary btn-lg">
+            ⚔️ Iniciar Incursión Roguelike (Piso 1/7)
+          </button>
+        </article>
+
+        <!-- Evento de Jefe Semanal: El Coloso de la Semana -->
+        <article class="incursion-hero-card boss-card">
+          <span class="card-kicker">BOSS FIGHT COGNITIVO · EVENTO ESPECIAL</span>
+          <h2>👾 El Coloso de la Semana</h2>
+          <p>
+            Una batalla de resistencia ejecutiva que encadena
+            <code>systems.js → triage.js → deduce.js</code> contra una entidad de <strong>2.200 HP</strong>.
+            Cada acierto tuyo funde su blindaje; el Modo Fever multiplica el daño.
+          </p>
+          <ul class="incursion-features-list">
+            <li>⚙️ Fase 1: Regulación de reactores en <code>systems.js</code>.</li>
+            <li>🚨 Fase 2: Priorización de emergencias en <code>triage.js</code>.</li>
+            <li>🧩 Fase 3: Matrices deductivas en <code>deduce.js</code>.</li>
+          </ul>
+          <button type="button" id="launchBossFightBtn" class="btn-primary btn-lg">
+            🔥 Desafiar al Coloso de la Semana
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         PESTAÑA 4: TALLER DE LA FORJA (24 RELIQUIAS SINÁPTICAS EN SVG)
+         ===================================================================== -->
+    <section id="panel-taller" class="tab-panel" role="tabpanel" hidden>
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">4. INVERSIÓN RPG · ART.JS</span>
+            <h2>Taller de la Forja: Las 24 Reliquias Sinápticas</h2>
+          </div>
+          <strong id="forgedRelicsCounter" class="relics-counter-pill">2 / 24 Reliquias Forjadas</strong>
+        </div>
+        <p class="section-sub">
+          Funde el Litio, Titanio, Obsidiana, Mercurio y Cobalto extraídos por tu cerebro para crear
+          artefactos animados en SVG que otorgan ventajas pasivas permanentes.
+        </p>
+        <div id="relicsWorkshopGrid" class="relics-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         PESTAÑA 5: ADN COGNITIVO, BIO-CORRELACIÓN Y TARJETA NEURO-WRAPPED
+         ===================================================================== -->
+    <section id="panel-adn" class="tab-panel" role="tabpanel" hidden>
+      <div class="adn-top-grid">
+        <!-- Radar Hexagonal y Arquetipo -->
+        <div class="adn-radar-card">
+          <span class="card-kicker">PERFIL EJECUTIVO HEXAGONAL</span>
+          <h3 id="adnArchetypeTitle">⚡ Calculador Relámpago</h3>
+          <p id="adnArchetypeDesc" class="section-sub"></p>
+          <div id="hexRadarContainer" class="hex-radar-holder"></div>
+          <!-- Tabla semántica accesible para tecnologías de asistencia -->
+          <table class="sr-only" aria-label="Puntuaciones por dominio cognitivo">
+            <thead>
+              <tr><th>Dominio Cognitivo</th><th>Puntuación</th></tr>
+            </thead>
+            <tbody id="radarAccessibleTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Bio-Tracking y Micro-Etiquetas de Contexto -->
+        <div class="adn-bio-card">
+          <span class="card-kicker">BIO-TRACKING Y HÁBITOS (14 DÍAS)</span>
+          <h3>Micro-Etiquetas de Contexto y Bio-Correlación</h3>
+          <p class="section-sub">
+            Marca tu estado biológico hoy para descubrir cómo el sueño, el café o el ejercicio impactan en tu córtex:
+          </p>
+          <div id="bioTagsContainer" class="bio-tags-grid"></div>
+          <div id="bioCorrelationInsights" class="bio-insights-stack"></div>
+        </div>
+      </div>
+
+      <!-- Exportador en Canvas de la Tarjeta Compartible «Neuro-Wrapped» -->
+      <div class="section-block wrapped-export-section">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">VIRALIDAD ORGÁNICA · GENERADOR EN CANVAS</span>
+            <h2>Tarjeta Compartible «Neuro-Wrapped»</h2>
+          </div>
+          <button type="button" id="downloadWrappedBtn" class="btn-primary">
+            📥 Descargar Certificado PNG (Instagram / WhatsApp)
+          </button>
+        </div>
+        <div class="canvas-preview-wrap">
+          <canvas
+            id="neuroWrappedCanvas"
+            width="720"
+            height="920"
+            aria-label="Vista previa del certificado de ADN Cognitivo Neuroforja 2.0"
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Códice de Principios Cognitivos y Sesgos (principles.js) -->
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="card-kicker">CONEXIÓN CON LA VIDA REAL · PRINCIPLES.JS</span>
+            <h2>Códice de Principios Cognitivos y Secretos Dorados</h2>
+          </div>
+        </div>
+        <div id="principlesCodexGrid" class="principles-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         PESTAÑA 6: LIGAS DE ALEACIÓN, PACTOS DE FUEGO Y DUELO FANTASMA
+         ===================================================================== -->
+    <section id="panel-social" class="tab-panel" role="tabpanel" hidden>
+      <div class="social-top-grid">
+        <!-- Duelo Asíncrono contra Fantasmas (Ghost Codes) -->
+        <div class="social-card">
+          <span class="card-kicker">COMPETICIÓN ASÍNCRONA SIN SERVIDOR</span>
+          <h3>👻 Duelo contra Fantasmas (Ghost Codes)</h3>
+          <p>
+            Pega el código corto de un amigo (o carga una Sombra Campeona) para competir en el mismo tablero
+            viendo su barra de progreso avanzar en vivo sobre la tuya.
+          </p>
+          <div class="ghost-duel-controls">
+            <input
+              id="ghostCodeInput"
+              type="text"
+              placeholder="Pega aquí un código NF2-..."
+              aria-label="Código Fantasma del rival"
+            />
+            <div class="ghost-btn-row">
+              <button type="button" id="startGhostDuelBtn" class="btn-primary">
+                ⚔️ Retar a esta Sombra en Vivo
+              </button>
+              <button type="button" id="loadSampleGhostBtn" class="btn-secondary">
+                ✨ Cargar Sombra Campeona de Muestra
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pactos de Fuego (Apuesta de Racha) -->
+        <div class="social-card">
+          <span class="card-kicker">AVERSIÓN A LA PÉRDIDA · COMPROMISO</span>
+          <h3>🔥 Pactos de Fuego (Apuesta de Racha)</h3>
+          <div id="firePactStatusBox" class="pact-box"></div>
+        </div>
+      </div>
+
+      <!-- Ligas de Aleación Semanales (5 Divisiones) -->
+      <div class="section-block">
+        <div id="leagueDivisionHeader"></div>
+        <div class="league-table-wrapper">
+          <table class="league-table">
+            <thead>
+              <tr>
+                <th>Pos.</th>
+                <th>Forjador</th>
+                <th>Temp. Fragua</th>
+                <th>Puntos Semanales</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="leagueTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =======================================================================
+       MODAL DE ARENA DE JUEGO (CON FEVER MODE, MICRO-DDA Y SOMBRA EN VIVO)
+       ======================================================================= -->
+  <div id="gameArenaModal" class="arena-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="arenaGameTitle" hidden>
+    <div class="arena-modal-shell">
+      <header class="arena-hud-bar">
+        <div class="arena-hud-left">
+          <h2 id="arenaGameTitle" class="arena-title">🎮 Minijuego</h2>
+          <span id="arenaLevelVal" class="arena-level-pill">NV. 1</span>
+          <span id="arenaMutatorBadge" class="arena-mutator-pill" hidden></span>
+        </div>
+
+        <div class="arena-hud-center">
+          <span id="feverHudBadge" class="fever-badge" hidden>🔥 SOBRECARGA ×2</span>
+        </div>
+
+        <div class="arena-hud-right">
+          <div class="arena-kpi">
+            <span>PUNTOS</span>
+            <strong id="arenaScoreVal">0</strong>
+          </div>
+          <div class="arena-kpi">
+            <span>RELOJ</span>
+            <strong id="arenaTimeVal">45.0s</strong>
+          </div>
+          <button type="button" id="closeArenaModalBtn" class="btn-close-arena" aria-label="Salir de la partida">
+            ✕ Salir
+          </button>
+        </div>
+      </header>
+
+      <!-- Barra de Progreso Temporal -->
+      <div class="arena-time-bar-track">
+        <div id="arenaTimeFill" class="arena-time-bar-fill"></div>
+      </div>
+
+      <!-- Barra de Sombra Fantasma en Vivo (Duelo Asíncrono) -->
+      <div id="arenaGhostTrack" class="arena-ghost-track" hidden>
+        <span id="arenaGhostLabel" class="arena-ghost-label">👻 Sombra Rival</span>
+        <div id="arenaGhostMarker" class="arena-ghost-marker">👻</div>
+      </div>
+
+      <!-- Barra de Vida del Coloso de la Semana (Boss Fight) -->
+      <div id="arenaBossHud" class="arena-boss-hud" hidden>
+        <div class="boss-hp-header">
+          <strong id="arenaBossHpText">👾 COLOSO DE LA SEMANA: 2200 / 2200 HP</strong>
+        </div>
+        <div class="boss-hp-track">
+          <div id="arenaBossHpFill" class="boss-hp-fill"></div>
+        </div>
+      </div>
+
+      <!-- Aviso Dinámico Intrapartida Micro-DDA (< 800 ms) -->
+      <div id="arenaMicroBanner" class="arena-micro-banner" hidden></div>
+
+      <!-- Escenario Interactivo del Juego -->
+      <div id="gameStageArena" class="game-stage-arena"></div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL DE CRISOL SELLADO (APERTURA EN 3 TOQUES DE MARTILLO)
+       ======================================================================= -->
+  <div id="crucibleModal" class="arena-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="crucibleModalTitle" hidden>
+    <div class="crucible-modal-card">
+      <div class="crucible-modal-header">
+        <h3 id="crucibleModalTitle">🏺 Cápsula de Escoria Luminosa (Crisol Sellado)</h3>
+        <button type="button" id="closeCrucibleModalBtn" class="btn-close-arena">✕</button>
+      </div>
+      <p id="crucibleTapInstruction" class="game-subhint">
+        Golpea el Crisol 3 veces con el martillo háptico para romper el sello térmico:
+      </p>
+      <div class="crucible-stage">
+        <button type="button" id="crucibleVesselBtn" class="crucible-vessel-btn" data-step="0">
+          <span class="crucible-glyph">🏺</span>
+          <span class="crucible-tap-hint">🔨 TOCAR PARA GOLPEAR</span>
+        </button>
+      </div>
+      <div class="crucible-odds-strip">
+        <span>💎 70% Minerales Puros</span>
+        <span>⚡ 25% Mutador Épico</span>
+        <span>🌟 5% Secreto Dorado / Tema</span>
+      </div>
+      <div id="crucibleRewardResult" hidden></div>
+    </div>
+  </div>
+
+  <!-- Micro-Píldora Interactiva en Vivo de Sesgos Cognitivos (principles.js) -->
+  <aside id="livePrincipleToast" class="live-principle-toast" aria-live="polite" hidden></aside>
+
+  <!-- Los 6 Motores Modulares del Blueprint + Catálogo de 20 Juegos + Controlador -->
+  <script src="js/core.js"></script>
+  <script src="js/fx.js"></script>
+  <script src="js/principles.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/fun.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/flow.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
